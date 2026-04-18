@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Time Sync - NTP Clock</title>
+        <link rel="stylesheet" href="src/css/window.css">
+    </head>
+
+    <body>
+        <div class="extension-container">
+            <header>
+                <div class="header-title">[⏱️] TIME SYNC PRO</div>
+                <div class="header-actions">
+                    <button id="themeToggle" class="icon-btn" title="Toggle Light/Dark Mode">☀️</button>
+                    <button id="settingsBtn" class="icon-btn" title="Settings">⚙️</button>
+                </div>
+            </header>
+
+            <div class="status-bar">
+                <span>STATUS:</span>
+                <span class="status-dot" id="statusDot"></span>
+                <span class="status-text" id="status">Ready to sync</span>
+            </div>
+
+            <div class="time-grid">
+                <div class="time-column">
+                    <div class="col-title">LOCAL TIME</div>
+                    <div class="time-value pc-time" id="pcTime">--:--:--</div>
+                    <div class="date-value" id="pcDate">Loading...</div>
+                    <div class="loc-value" id="locationDisplay"></div>
+
+                    <label class="toggle-switch" title="Aktifkan/Matikan Lokasi">
+                        <input type="checkbox" id="locationToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="divider-vertical"></div>
+
+                <div class="time-column">
+                    <div class="col-title">SERVER TIME (UTC)</div>
+                    <div class="time-value server-time" id="serverTime">--:--:--</div>
+                    <div class="date-value" id="serverDate">Loading...</div>
+                    <div class="loc-value" id="serverHost">HOST: pool.ntp.org</div>
+                </div>
+            </div>
+
+            <div class="controls-footer">
+                <button class="btn-outline" id="autoBtn">Auto Sync</button>
+                <button class="btn-primary" id="syncBtn">
+                    <span class="sync-icon">🔄</span>
+                    <span id="syncBtnText">FORCE SYNC</span>
+                </button>
+            </div>
+
+        </div>
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <h2>Settings</h2>
+                    </div>
+                    <div class="modal-actions">
+                        <span class="save-status" id="saveStatus"></span>
+                        <button class="close-btn" id="closeModal">❌</button>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">NTP Server Address</label>
+                        <input type="text" id="ntpInput" placeholder="e.g., pool.ntp.org" readonly>
+                    </div>
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label class="form-label">Custom Location (Optional)</label>
+                        <input type="text" id="locationInput" placeholder="e.g., Kantor Dinas X" maxlength="40">
+                    </div>
+                    <div class="form-label" style="margin-top: 12px;">Reference NTP Servers</div>
+                    <div class="quick-select">
+                        <button class="btn-outline quick-select-btn"
+                            data-server="worldtimeapi.org">worldtimeapi.org</button>
+                        <button class="btn-outline quick-select-btn" data-server="timeapi.io">timeapi.io</button>
+                    </div>
+
+                    <div class="divider-horizontal"></div>
+
+                    <div class="form-group">
+                        <label class="form-label">Auto Sync Interval (seconds)</label>
+                        <input type="number" id="intervalInput" min="10" placeholder="60">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="window.js"></script>
+    </body>
+
+</html>

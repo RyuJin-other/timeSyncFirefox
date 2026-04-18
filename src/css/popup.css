@@ -1,0 +1,382 @@
+/* ========================================= */
+/* File: popup.css                           */
+/* ========================================= */
+
+/* --- Tema & Variabel --- */
+:root {
+  --bg-main: #f3f4f6;
+  --bg-card: #ffffff;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --border-color: #d1d5db;
+  --accent-blue: #2563eb;
+  --success-green: #10b981;
+  --time-local: #111827;
+  --time-server: #2563eb;
+  --btn-hover: #e5e7eb;
+}
+
+[data-theme="dark"] {
+  --bg-main: #121212;
+  --bg-card: #1e2124;
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+  --border-color: #374151;
+  --accent-blue: #3b82f6;
+  --time-local: #facc15; /* Kuning terang untuk kontras mode gelap */
+  --time-server: #00fff2; /* Cyan untuk server */
+  --btn-hover: #2a2d31;
+}
+
+/* --- Base --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 380px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+  user-select: none;
+}
+
+.extension-container {
+  padding: 12px;
+}
+
+/* --- Header --- */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 12px;
+}
+
+.header-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.icon-btn:hover {
+  background: var(--btn-hover);
+}
+
+/* --- Status --- */
+.status-bar {
+  font-size: 10px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--success-green);
+  border-radius: 50%;
+}
+.status-text {
+  color: var(--success-green);
+}
+
+/* --- Audit Trail Grid --- */
+.time-grid {
+  display: flex;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.time-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.divider-vertical {
+  width: 1px;
+  background-color: var(--border-color);
+  margin: 0 12px;
+}
+
+.col-title {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.time-value {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 22px;
+  font-weight: bold;
+  margin: 4px 0;
+}
+.pc-time {
+  color: var(--time-local);
+}
+.server-time {
+  color: var(--time-server);
+}
+
+.date-value,
+.loc-value {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* --- Controls --- */
+.controls-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+button {
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-primary {
+  background: var(--accent-blue);
+  color: white;
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+.btn-outline:hover {
+  background: var(--btn-hover);
+}
+.btn-success {
+  background: var(--success-green);
+  color: white;
+}
+
+/* --- Modal Adjustments --- */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal {
+  background: var(--bg-card);
+  width: 340px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh; /* Tinggi kotak tidak boleh melebihi 85% layar pop-up */
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between; /* Mendorong kiri dan kanan */
+  align-items: center;
+  width: 100%; /* Pastikan lebarnya mentok kiri-kanan */
+  box-sizing: border-box; /* Agar padding tidak merusak lebar */
+  padding: 12px 16px;
+}
+
+.modal-header h2,
+.modal-header h4 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background-color: var(--btn-hover);
+  color: var(--text-main);
+}
+
+.modal-body {
+  padding: 12px;
+  /* KUNCI SCROLL-NYA DI SINI 👇 */
+  overflow-y: auto;
+}
+
+/* Kustomisasi Scrollbar opsional biar elegan */
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.modal-body::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 10px;
+}
+
+.form-label {
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  display: block;
+  padding: 0;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-main);
+  color: var(--text-main);
+  transition: border-color 0.2s;
+}
+input[readonly] {
+  background-color: var(--bg-main);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+}
+
+.divider-horizontal {
+  height: 1px;
+  background: var(--border-color);
+  margin: 6px 0;
+}
+
+.quick-select {
+  display: flex;
+  flex-wrap: wrap; /* Ini kuncinya biar tombol otomatis turun ke baris baru */
+  gap: 6px;
+  margin-top: 4px;
+}
+.quick-select-btn {
+  padding: 4px 8px;
+  font-size: 10px;
+  flex-grow: 1; /* Biar lebar tombolnya otomatis mengisi ruang kosong */
+}
+
+/* Container untuk menyejajarkan teks dan toggle */
+.location-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+
+/* Desain Toggle Switch Modern */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 18px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #555;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+/* Warna saat toggle ON (Hijau/Biru) */
+input:checked + .slider {
+  background-color: #2196F3; 
+}
+
+/* Animasi geser */
+input:checked + .slider:before {
+  transform: translateX(16px);
+}
