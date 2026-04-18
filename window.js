@@ -362,7 +362,7 @@ async function syncNow(silent = false) {
       state.timeOffset = (serverDateTime - localDateTime) / 1000;
       state.lastSync = localDateTime;
       const diff = Math.abs(state.timeOffset);
-      if (diff < 0.4999) setStatus("● SECURE NTP SYNC", "#10B981");
+      if (diff < 0.499) setStatus("● SECURE NTP SYNC", "#10B981");
       else setStatus(`● Time Late: ${diff.toFixed(3)}s`, "#F59E0B");
     } else throw new Error("Servers failed");
   } catch (error) {
