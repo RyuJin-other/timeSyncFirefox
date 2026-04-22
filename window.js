@@ -362,8 +362,16 @@ async function syncNow(silent = false) {
       state.timeOffset = (serverDateTime - localDateTime) / 1000;
       state.lastSync = localDateTime;
       const diff = Math.abs(state.timeOffset);
-      if (diff < 0.499) setStatus("● SECURE NTP SYNC", "#10B981");
-      else setStatus(`● Time Late: ${diff.toFixed(3)}s`, "#F59E0B");
+      if (diffInSeconds <= 0.499) {
+        statusElement.innerHTML = "● Synced Perfectly";
+        statusElement.style.color = "#4ade80"; // Hijau
+      } else if (diffInSeconds <= 3.0) {
+        statusElement.innerHTML = "● Acceptable";
+        statusElement.style.color = "#60a5fa"; // Biru
+      } else {
+        statusElement.innerHTML = "● Time Late";
+        statusElement.style.color = "#fb923c"; // Oranye
+      }
     } else throw new Error("Servers failed");
   } catch (error) {
     setStatus("● Sync failed", "#EF4444");
