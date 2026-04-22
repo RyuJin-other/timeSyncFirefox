@@ -33,7 +33,7 @@ Saat ini ekstensi berada dalam tahap pengujian (_development_). Ikuti langkah si
 
 ---
 
-## 🦊 2. Panduan Instalasi untuk Mozilla Firefox
+## 🦊 Panduan Instalasi untuk Mozilla Firefox
 
 Untuk pengguna Firefox, kami sangat menyarankan untuk menginstal langsung melalui toko resmi Mozilla Add-ons agar selalu mendapatkan pembaruan otomatis. Namun, kami juga menyediakan opsi instalasi manual.
 
