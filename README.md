@@ -71,7 +71,7 @@ Gunakan cara ini jika Anda ingin menginstal versi spesifik atau mengunduh fileny
 Jangan biarkan latensi internet merusak validasi Anda! Ekstensi ini memberi tahu Anda kapan waktu terbaik untuk mengambil _screenshot_:
 
 - 🟢 **`● Synced Perfectly` (Selisih ≤ 0.5s):** Waktu sangat akurat. Kondisi paling ideal untuk dokumentasi.
-- 🔵 **`● Acceptable` (Selisih 1.0s - 3.0s):** Waktu masih valid, selisih murni disebabkan oleh jeda jaringan.
+- 🔵 **`● Acceptable` (Selisih 0.5s - 1.0s):** Waktu masih valid, selisih murni disebabkan oleh jeda jaringan.
 - 🟠 **`● Time Late` (Selisih > 3.0s):** Ada _delay_ dari server. Sebaiknya klik _Sync Now_ sekali lagi sebelum mengambil gambar.
 
 ---
