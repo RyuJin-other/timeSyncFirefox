@@ -33,6 +33,30 @@ Saat ini ekstensi berada dalam tahap pengujian (_development_). Ikuti langkah si
 
 ---
 
+## 🦊 2. Panduan Instalasi untuk Mozilla Firefox
+
+Untuk pengguna Firefox, kami sangat menyarankan untuk menginstal langsung melalui toko resmi Mozilla Add-ons agar selalu mendapatkan pembaruan otomatis. Namun, kami juga menyediakan opsi instalasi manual.
+
+### Opsi A: Instalasi via Firefox Add-ons Store (Rekomendasi)
+
+Ini adalah cara termudah dan paling aman.
+
+1. Buka halaman resmi Time Sync Pro di Mozilla Add-ons:  
+   👉 **[Install Time Sync Pro dari Firefox Add-ons](Masukkan_Link_Store_Firefox_Kamu_Di_Sini)**
+2. Klik tombol biru **"Add to Firefox"**.
+3. Klik **"Add"** pada _pop-up_ persetujuan yang muncul. Selesai! 🎉
+
+### Opsi B: Instalasi Manual via File .xpi
+
+Gunakan cara ini jika Anda ingin menginstal versi spesifik atau mengunduh filenya secara manual.
+
+1. **Unduh File:** Download file **[TimeSyncPro.xpi](https://addons.mozilla.org/firefox/downloads/file/4775309/296c682e3a3c4fa6b2c4-1.0.0.xpi)** dari repositori ini.
+2. **Pasang ke Browser:** Buka browser Firefox Anda, lalu seret dan lepas (_drag and drop_) file `.xpi` tersebut langsung ke dalam layar _browser_.
+   _(Alternatif: Ketik `about:addons` di address bar, klik ikon ⚙️, dan pilih "Install Add-on From File...")._
+3. **Konfirmasi:** Klik tombol **"Add"** pada peringatan yang muncul. Selesai! 🎉
+
+---
+
 ## 📖 Panduan Penggunaan
 
 1. **Buka Ekstensi:** Klik ikon **Time Sync** di _toolbar_.
