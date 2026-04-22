@@ -8,7 +8,7 @@
 
 Sering ragu apakah _timestamp_ di _screenshot_ Anda sudah valid? **Time Sync** adalah ekstensi Firefox ringan yang menyinkronkan waktu lokal komputer Anda dengan server NTP (_Network Time Protocol_) global secara _real-time_.
 
-Alat ini sangat cocok digunakan untuk memastikan keabsahan waktu pada dokumentasi laporan administratif (seperti penyusunan bukti Aktualisasi/Latsar), investigasi OSINT (_Open-Source Intelligence_), forensik digital, atau sekadar pengujian sistem yang sensitif terhadap waktu.
+Alat ini sangat cocok digunakan untuk memastikan keabsahan waktu pada dokumentasi laporan administratif investigasi OSINT (_Open-Source Intelligence_), forensik digital, atau sekadar pengujian sistem yang sensitif terhadap waktu.
 
 ---
 
