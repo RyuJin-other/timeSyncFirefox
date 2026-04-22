@@ -14,7 +14,7 @@ Alat ini sangat cocok digunakan untuk memastikan keabsahan waktu pada dokumentas
 
 ## ✨ Fitur Unggulan
 
-- 🌍 **Multi-Server API:** Mengambil data waktu dengan presisi tinggi dari _provider_ tepercaya (WorldTimeAPI, NIST, Google, dan TimeAPI.io).
+- 🌍 **Multi-Server Public API:** Mengambil data waktu dengan presisi tinggi dari _provider_ tepercaya.
 - 📌 **Floating Window (Detach mode):** Lepas panel ekstensi menjadi jendela melayang yang praktis. Sangat mudah disandingkan di pojok layar saat Anda bersiap mengambil _screenshot_.
 - 🔒 **Smart Resize Lock:** Jendela _floating_ akan selalu mengunci pada ukuran proporsional yang rapi. Tidak perlu khawatir jendela tidak sengaja membesar atau merusak estetika _screenshot_.
 - ⚡ **Cerdas Membaca Latensi:** Dilengkapi dengan indikator warna (_diff_) yang menoleransi _Round-Trip Time_ (RTT) jaringan internet Anda.
