@@ -120,6 +120,10 @@ function updateLocationDisplay() {
   const useFallbackTimezone = () => {
     let areaName = "Indonesia";
     try {
+      alert(
+        "Akses lokasi diblokir oleh browser. Silakan izinkan akses lokasi di pengaturan privasi browser Anda.",
+      );
+
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       if (tz) areaName = tz.replace(/_/g, " ");
     } catch (e) {}
@@ -362,15 +366,12 @@ async function syncNow(silent = false) {
       state.timeOffset = (serverDateTime - localDateTime) / 1000;
       state.lastSync = localDateTime;
       const diff = Math.abs(state.timeOffset);
-      if (diffInSeconds <= 0.499) {
-        statusElement.innerHTML = "● Synced Perfectly";
-        statusElement.style.color = "#4ade80"; // Hijau
-      } else if (diffInSeconds <= 3.0) {
-        statusElement.innerHTML = "● Acceptable";
-        statusElement.style.color = "#60a5fa"; // Biru
+      if (diff <= 0.499) {
+        setStatus("● Sync Successful", "#4ade80");
+      } else if (diff <= 1.0) {
+        setStatus("● Acceptable", "#60a5fa");
       } else {
-        statusElement.innerHTML = "● Time Late";
-        statusElement.style.color = "#fb923c"; // Oranye
+        setStatus(`● Time Late: ${diff.toFixed(3)}s`, "#fb923c");
       }
     } else throw new Error("Servers failed");
   } catch (error) {
