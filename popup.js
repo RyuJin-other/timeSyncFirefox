@@ -1,11 +1,11 @@
 // =======================================================
-// File: popup.js (INDUK EXTENSION)
+// File: popup.js
 // =======================================================
 
 const browserAPI =
   typeof chrome !== "undefined" && chrome.runtime
     ? chrome
-    : typeof browser !== "undefined" && browser.runtime
+    : typeof browser !== "undefined"
       ? browser
       : null;
 
@@ -15,7 +15,7 @@ const SYNC_COOLDOWN = 1000;
 const MAX_TIME_DIFF = 365 * 24 * 60 * 60 * 1000;
 
 const state = {
-  ntpServer: "worldtimeapi.org",
+  ntpServer: "time.now",
   syncInterval: 60,
   serverTime: null,
   lastSync: null,
@@ -54,7 +54,6 @@ const elements = {
   saveStatus: document.getElementById("saveStatus"),
 };
 
-// --- API Helpers ---
 function isValidDomain(domain) {
   if (!domain || typeof domain !== "string") return false;
   domain = domain.trim();
@@ -75,7 +74,6 @@ function isValidTimestamp(ts) {
   );
 }
 
-// --- Settings & Location ---
 function initTheme() {
   if (browserAPI && browserAPI.storage) {
     browserAPI.storage.local.get(["theme"], (result) => {
@@ -90,11 +88,13 @@ function initTheme() {
 function updateLocationDisplay() {
   if (!elements.locationDisplay) return;
 
+  // --- PINTU GERBANG PRIVASI ---
   if (!state.locationEnabled) {
     elements.locationDisplay.textContent = "LOC: Nonaktif";
     return;
   }
 
+  // PRIORITAS 1: Cek Input Manual
   if (state.customLocation && state.customLocation.trim() !== "") {
     elements.locationDisplay.textContent = `LOC: ${state.customLocation}`;
     return;
@@ -102,37 +102,43 @@ function updateLocationDisplay() {
 
   elements.locationDisplay.textContent = "LOC: Mendeteksi...";
 
-  const useFallbackTimezone = () => {
-    let areaName = "Indonesia";
-    try {
-      alert(
-        "Akses lokasi diblokir oleh browser. Silakan izinkan akses lokasi di pengaturan privasi browser Anda.",
-      );
-
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      if (tz) areaName = tz.replace(/_/g, " ");
-    } catch (e) {}
-    elements.locationDisplay.textContent = `LOC: ${areaName}`;
-  };
-
+  // PRIORITAS 4 (CARA TERAKHIR): Jalur Udara / IP API
   const useIPLocation = async () => {
     try {
-      // Menggunakan GeoJS yang sangat ramah terhadap ekstensi browser
       const response = await fetch("https://get.geojs.io/v1/ip/geo.json");
       if (!response.ok) throw new Error("API diblokir");
       const data = await response.json();
-
-      // GeoJS mengembalikan data 'city' dan 'country' secara langsung
       if (data.city && data.country) {
         elements.locationDisplay.textContent = `LOC: ${data.city}, ${data.country}`;
       } else {
-        useFallbackTimezone();
+        elements.locationDisplay.textContent = "LOC: Tidak Diketahui";
       }
     } catch (err) {
-      useFallbackTimezone();
+      elements.locationDisplay.textContent = "LOC: Tidak Diketahui";
     }
   };
 
+  // PRIORITAS 3: Fallback ke Timezone OS (Cepat, Tanpa Internet, Anti-CORS)
+  const useFallbackTimezone = () => {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (tz) {
+        alert(
+          "Akses lokasi diblokir oleh browser. Silakan izinkan akses lokasi di pengaturan privasi browser Anda.",
+        );
+
+        const areaName = tz.replace(/_/g, " ");
+        elements.locationDisplay.textContent = `LOC: ${areaName}`;
+      } else {
+        // Jika timezone juga gagal terbaca, baru panggil cara terakhir (IP API)
+        useIPLocation();
+      }
+    } catch (e) {
+      useIPLocation(); // Lempar ke cara terakhir
+    }
+  };
+
+  // PRIORITAS 2: Percobaan Utama (Navigator GPS / Jalur Darat)
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -148,6 +154,7 @@ function updateLocationDisplay() {
           const exactLocation =
             data.address.city ||
             data.address.town ||
+            data.address.village ||
             data.address.county ||
             "GPS Lokasi";
           const countryCode = data.address.country_code
@@ -155,16 +162,21 @@ function updateLocationDisplay() {
             : "ID";
           elements.locationDisplay.textContent = `LOC: ${exactLocation}, ${countryCode}`;
         } catch (err) {
-          useIPLocation();
+          // Gagal ubah koordinat jadi teks? Langsung pakai Timezone OS
+
+          useFallbackTimezone();
         }
       },
       (error) => {
-        useIPLocation();
+        // User menolak GPS atau sistem menolak? Langsung pakai Timezone OS
+        useFallbackTimezone();
       },
       { timeout: 5000, enableHighAccuracy: false },
     );
   } else {
-    useIPLocation();
+    // Browser sangat jadul? Pakai Timezone OS
+
+    useFallbackTimezone();
   }
 }
 
@@ -176,7 +188,7 @@ function loadSettings() {
         state.ntpServer =
           result.ntpServer && isValidDomain(result.ntpServer)
             ? result.ntpServer
-            : "worldtimeapi.org";
+            : "time.now";
         state.syncInterval = sanitizeNumber(
           result.syncInterval,
           MIN_INTERVAL,
@@ -216,25 +228,31 @@ function saveSettings() {
   }
 }
 
-// --- FITUR DETACH (HANYA DI POPUP) ---
+// --- FITUR DETACH (FIREFOX & CHROMIUM COMPATIBLE) ---
 if (elements.detachBtn) {
   elements.detachBtn.addEventListener("click", () => {
-    const windowUrl = "window.html";
+    const windowUrl = browserAPI.runtime.getURL("window.html");
+
     if (browserAPI && browserAPI.windows) {
-      browserAPI.windows.create(
-        {
-          url: windowUrl,
-          type: "popup",
-          width: 380,
-          height: 300,
-          focused: true,
-        },
-        (newWindow) => {
-          setTimeout(() => {
-            if (window.close) window.close();
-          }, 100);
-        },
-      );
+      // Firefox: windows.create() returns a Promise
+      // Chromium: windows.create() uses callback, but also supports Promise
+      const createPromise = browserAPI.windows.create({
+        url: windowUrl,
+        type: "popup",
+        width: 380,
+        height: 300,
+        focused: true,
+      });
+      // Handle both Promise (Firefox) and callback-based (Chromium)
+      const closePopup = () =>
+        setTimeout(() => {
+          if (window.close) window.close();
+        }, 100);
+      if (createPromise && typeof createPromise.then === "function") {
+        createPromise.then(closePopup).catch(closePopup);
+      } else {
+        closePopup();
+      }
     } else {
       window.open(
         windowUrl,
@@ -248,7 +266,6 @@ if (elements.detachBtn) {
   });
 }
 
-// --- Time Format ---
 function formatJustTime(d) {
   return d
     ? d.toLocaleTimeString("en-US", {
@@ -332,7 +349,6 @@ function setStatus(text, color) {
   if (elements.statusDot) elements.statusDot.style.backgroundColor = color;
 }
 
-// --- Core Sync ---
 async function syncNow(silent = false) {
   const now = Date.now();
   if (now - state.lastSyncTime < SYNC_COOLDOWN) return;
@@ -347,24 +363,48 @@ async function syncNow(silent = false) {
 
   try {
     let serverDateTime = null;
-    const urls = [
-      "https://worldtimeapi.org/api/timezone/Etc/UTC",
-      "https://timeapi.io/api/time/current/zone?timeZone=UTC",
+    const sources = [
+      // PRIMARY: time.now — schema identik WorldTimeAPI, field unixtime tersedia
+      {
+        url: "https://time.now/developer/api/timezone/Etc/UCT",
+        parse: (data) => (data.unixtime ? data.unixtime * 1000 : null),
+      },
+      // FALLBACK 1: timeapi.io /timezone/zone
+      {
+        url: "https://timeapi.io/api/v1/timezone/zone?timeZone=Etc%2FUCT",
+        parse: (data) => {
+          const raw = data.currentLocalTime || data.dateTime;
+          return raw
+            ? new Date(raw.endsWith("Z") ? raw : raw + "Z").getTime()
+            : null;
+        },
+      },
+      // FALLBACK 2: timeapi.io /time/current/zone
+      {
+        url: "https://timeapi.io/api/time/current/zone?timeZone=Etc%2FUCT",
+        parse: (data) => {
+          const raw = data.currentLocalTime || data.dateTime;
+          return raw
+            ? new Date(raw.endsWith("Z") ? raw : raw + "Z").getTime()
+            : null;
+        },
+      },
     ];
 
-    for (const url of urls) {
+    for (const source of sources) {
       if (serverDateTime) break;
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
-        const response = await fetch(url, { signal: controller.signal });
+        const response = await fetch(source.url, { signal: controller.signal });
         clearTimeout(timeoutId);
         if (response.ok) {
           const data = await response.json();
-          const ts = data.unixtime
-            ? data.unixtime * 1000
-            : new Date(data.dateTime + "Z").getTime();
-          if (isValidTimestamp(ts)) serverDateTime = new Date(ts);
+          const ts = source.parse(data);
+          if (ts && isValidTimestamp(ts)) {
+            serverDateTime = new Date(ts);
+            serverDateTime._fromTimeNow = source.url.includes("time.now");
+          }
         }
       } catch (e) {}
     }
@@ -393,7 +433,7 @@ async function syncNow(silent = false) {
   }
 }
 
-// --- Event Listeners ---
+// Event Listeners with Safety Wrappers
 if (elements.syncBtn)
   elements.syncBtn.addEventListener("click", () => syncNow(false));
 
@@ -411,18 +451,14 @@ if (elements.autoBtn) {
   });
 }
 
-if (elements.settingsBtn) {
+if (elements.settingsBtn)
   elements.settingsBtn.addEventListener("click", () => {
     if (elements.modalOverlay) elements.modalOverlay.classList.add("active");
   });
-}
-
-if (elements.closeModal) {
+if (elements.closeModal)
   elements.closeModal.addEventListener("click", () => {
     if (elements.modalOverlay) elements.modalOverlay.classList.remove("active");
   });
-}
-
 if (elements.themeToggle) {
   elements.themeToggle.addEventListener("click", () => {
     const newTheme =
@@ -435,28 +471,24 @@ if (elements.themeToggle) {
       browserAPI.storage.local.set({ theme: newTheme });
   });
 }
-
 if (elements.locationToggle) {
   elements.locationToggle.addEventListener("change", (e) => {
     state.locationEnabled = e.target.checked;
-    browserAPI.storage.local.set({ locationEnabled: state.locationEnabled });
+    if (browserAPI && browserAPI.storage)
+      browserAPI.storage.local.set({ locationEnabled: state.locationEnabled });
     updateLocationDisplay();
   });
 }
-
 if (elements.ntpInput) {
   elements.ntpInput.addEventListener("input", (e) => {
     const value = e.target.value.trim();
     if (value === "" || isValidDomain(value)) {
       elements.ntpInput.style.borderColor = "";
-      state.ntpServer = value || "worldtimeapi.org";
+      state.ntpServer = value || "time.now";
       saveSettings();
-    } else {
-      elements.ntpInput.style.borderColor = "#EF4444";
-    }
+    } else elements.ntpInput.style.borderColor = "#EF4444";
   });
 }
-
 if (elements.intervalInput) {
   elements.intervalInput.addEventListener("input", (e) => {
     state.syncInterval = sanitizeNumber(
@@ -468,7 +500,6 @@ if (elements.intervalInput) {
     saveSettings();
   });
 }
-
 if (elements.locationInput) {
   elements.locationInput.addEventListener("input", (e) => {
     const safeValue = (str) =>
@@ -479,7 +510,6 @@ if (elements.locationInput) {
     saveSettings();
   });
 }
-
 document.querySelectorAll(".quick-select-btn").forEach((btn) => {
   btn.addEventListener("click", (e) => {
     const server = e.currentTarget.getAttribute("data-server");
@@ -493,7 +523,6 @@ document.querySelectorAll(".quick-select-btn").forEach((btn) => {
   });
 });
 
-// --- Init ---
 loadSettings();
 initTheme();
 clockInterval = setInterval(updateClock, 1000);
